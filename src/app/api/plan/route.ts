@@ -63,7 +63,28 @@ Respond ONLY with this JSON object. Do not wrap in markdown code blocks or add e
     // Extract and parse JSON with robust repair logic
     let parsedData;
     try {
-      parsedData = extractAndParseJson(result.text);
+      const parsed = extractAndParseJson(result.text);
+      
+      // Sanitize keys to enforce the snake_case contract and prevent frontend crashes
+      parsedData = {
+        risk_level: parsed.risk_level || parsed.riskLevel || weather?.risk?.level || "GREEN",
+        summary: parsed.summary || "Preparedness plan generated successfully.",
+        do_now: Array.isArray(parsed.do_now) ? parsed.do_now : 
+                Array.isArray(parsed.doNow) ? parsed.doNow : 
+                Array.isArray(parsed.immediate_actions) ? parsed.immediate_actions :
+                Array.isArray(parsed.immediateActions) ? parsed.immediateActions : [],
+        avoid: Array.isArray(parsed.avoid) ? parsed.avoid : 
+               Array.isArray(parsed.things_to_avoid) ? parsed.things_to_avoid :
+               Array.isArray(parsed.thingsToAvoid) ? parsed.thingsToAvoid : [],
+        emergency_kit: Array.isArray(parsed.emergency_kit) ? parsed.emergency_kit : 
+                       Array.isArray(parsed.emergencyKit) ? parsed.emergencyKit : [],
+        family_precautions: Array.isArray(parsed.family_precautions) ? parsed.family_precautions : 
+                            Array.isArray(parsed.familyPrecautions) ? parsed.familyPrecautions : [],
+        emergency_action: parsed.emergency_action || parsed.emergencyAction || "Stay indoors and monitor local weather feeds.",
+        recovery_actions: Array.isArray(parsed.recovery_actions) ? parsed.recovery_actions : 
+                          Array.isArray(parsed.recoveryActions) ? parsed.recoveryActions : 
+                          Array.isArray(parsed.recoverySafetySteps) ? parsed.recoverySafetySteps : []
+      };
     } catch (e: any) {
       console.error("AI JSON parsing failure. Raw text:", result.text, "Error:", e.message);
       return NextResponse.json({ 

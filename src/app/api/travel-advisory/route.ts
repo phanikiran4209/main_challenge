@@ -92,7 +92,20 @@ Respond ONLY with this JSON object. Do not wrap in markdown code blocks or add e
 
     let parsedData;
     try {
-      parsedData = extractAndParseJson(result.text);
+      const parsed = extractAndParseJson(result.text);
+      
+      // Sanitize keys to enforce the snake_case contract and prevent frontend crashes
+      parsedData = {
+        safety_level: parsed.safety_level || parsed.safetyLevel || "CAUTION",
+        reason: parsed.reason || "Travel advisory warning was parsed with empty details.",
+        best_time: parsed.best_time || parsed.bestTime || "Please check weather conditions before departure.",
+        alternate_route: parsed.alternate_route || parsed.alternateRoute || "Use main expressways and highways where possible.",
+        what_to_carry: Array.isArray(parsed.what_to_carry) ? parsed.what_to_carry :
+                       Array.isArray(parsed.whatToCarry) ? parsed.whatToCarry : [],
+        survival_tips: Array.isArray(parsed.survival_tips) ? parsed.survival_tips :
+                       Array.isArray(parsed.survivalTips) ? parsed.survivalTips : [],
+        disclaimer: parsed.disclaimer || "AI-assisted guidance; follow local law enforcement warnings."
+      };
     } catch (e: any) {
       console.error("AI travel advice JSON parsing failure. Raw text:", result.text, "Error:", e.message);
       return NextResponse.json({ 

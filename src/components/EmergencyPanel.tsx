@@ -67,47 +67,8 @@ const EMERGENCY_HELPLINES = [
 export default function EmergencyPanel({ profile, weather }: EmergencyPanelProps) {
   const [sosActive, setSosActive] = useState(false);
   const [offlineChecks, setOfflineChecks] = useState<string[]>([]);
-  const [incidents, setIncidents] = useState<IncidentReport[]>([
-    {
-      id: 1,
-      category: "waterlogging",
-      description: "Severe waterlogging near subway entrance. Water levels up to 2.5 feet. Avoid small cars.",
-      location: "Andheri Subway, Mumbai",
-      reporter: "Anil K.",
-      verified: true,
-      timestamp: "10 mins ago",
-    },
-    {
-      id: 2,
-      category: "fallen_tree",
-      description: "A large banyan tree fell blocking the left lane. Police are on the way.",
-      location: "Ghatkopar Link Road",
-      reporter: "Siddharth S.",
-      verified: false,
-      timestamp: "25 mins ago",
-    },
-  ]);
-
-  const [helpRequests, setHelpRequests] = useState<HelpRequest[]>([
-    {
-      id: 1,
-      category: "charging",
-      urgency: "high",
-      location: "Sion West, Lane 3, Ground Floor",
-      details: "Elderly resident needs power for oxygen concentrator backup. Household has been out of power for 4 hours.",
-      requester: "Mrs. Deshmukh",
-      status: "open",
-    },
-    {
-      id: 2,
-      category: "food",
-      urgency: "medium",
-      location: "Kurla East, Nehru Nagar",
-      details: "Need dry rations and clean drinking water for a family of 5, water has entered the ground floor corridor.",
-      requester: "Ramesh Patel",
-      status: "open",
-    },
-  ]);
+  const [incidents, setIncidents] = useState<IncidentReport[]>([]);
+  const [helpRequests, setHelpRequests] = useState<HelpRequest[]>([]);
 
   // Form states
   const [newIncident, setNewIncident] = useState({ category: "waterlogging", description: "", location: "" });

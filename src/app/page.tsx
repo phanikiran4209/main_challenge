@@ -24,36 +24,36 @@ import {
 } from "lucide-react";
 
 const DEFAULT_PROFILE: UserProfile = {
-  name: "Rajesh Kumar",
-  phone: "+91 98765 43210",
+  name: "",
+  phone: "",
   language: "English",
-  members: ["elderly", "toddler_child"],
-  homeType: "ground_floor",
-  floor: "Ground Floor",
-  vehicle: "two_wheeler",
-  commuteRoute: "Kurla to Andheri East subway",
-  emergencyContacts: "Wife: +91 98765 00000, Ward Disaster Room: 1916",
-  medicalNeeds: "Blood pressure tablets (7-day stock)",
+  members: [],
+  homeType: "apartment",
+  floor: "Above 2nd Floor",
+  vehicle: "none",
+  commuteRoute: "",
+  emergencyContacts: "",
+  medicalNeeds: "",
   role: "citizen",
-  readinessCheckedItems: ["docs", "contacts"],
+  readinessCheckedItems: [],
 };
 
 const DEFAULT_WEATHER: WeatherData = {
-  location: "Mumbai, Maharashtra (India)",
+  location: "Awaiting location synchronization...",
   coordinates: { lat: 19.0760, lon: 72.8777 },
   current: {
-    temp: 27.5,
-    humidity: 92,
-    feels_like: 32.8,
-    rain: 22.4,
-    wind: 38.2,
-    weather_code: 95,
-    description: "Thunderstorm",
-    category: "thunderstorm",
+    temp: 0,
+    humidity: 0,
+    feels_like: 0,
+    rain: 0,
+    wind: 0,
+    weather_code: 0,
+    description: "No weather data loaded.",
+    category: "dry",
   },
   risk: {
-    level: "ORANGE",
-    reason: "Heavy weather alert: Thunderstorm detected. Rainfall of 22.4 mm or winds of 38.2 km/h. Avoid travel and secure home.",
+    level: "GREEN",
+    reason: "Awaiting city search or GPS detection to compute threat levels.",
   },
   forecast: [],
 };
@@ -202,61 +202,12 @@ export default function Home() {
     }
   };
 
-  // Simulate Weather alerts for judges testing
-  const handleSimulateAlert = (type: "ORANGE_ALERT" | "RED_ALERT" | "CLEAR_ALERT") => {
-    if (type === "RED_ALERT") {
-      setWeather({
-        location: "Mumbai, Maharashtra (Simulated Red Alert)",
-        coordinates: weather.coordinates,
-        current: {
-          temp: 24.0,
-          humidity: 98,
-          feels_like: 26.5,
-          rain: 58.2,
-          wind: 68.0,
-          weather_code: 99,
-          description: "Severe Thunderstorm & Heavy Hail",
-          category: "thunderstorm_hail",
-        },
-        risk: {
-          level: "RED",
-          reason: "Severe weather warning: Simulated Red Alert with extreme precipitation (58.2 mm) and dangerous winds (68.0 km/h). Severe waterlogging expected. Evacuate if instructed.",
-        },
-        forecast: weather.forecast,
-      });
-    } else if (type === "ORANGE_ALERT") {
-      setWeather({
-        location: "Mumbai, Maharashtra (Simulated Orange Alert)",
-        coordinates: weather.coordinates,
-        current: {
-          temp: 26.2,
-          humidity: 95,
-          feels_like: 30.1,
-          rain: 32.5,
-          wind: 45.0,
-          weather_code: 65,
-          description: "Heavy Monsoon Rain",
-          category: "rain_heavy",
-        },
-        risk: {
-          level: "ORANGE",
-          reason: "Heavy weather alert: Simulated Orange Alert with 32.5 mm rainfall. Low-lying roads flooded. Commuting via underpasses is dangerous.",
-        },
-        forecast: weather.forecast,
-      });
-    } else {
-      // Clear alert / Reset to normal weather
-      fetchWeatherData("Mumbai");
-    }
-  };
-
-  // Automatically refresh AI Plan when weather risk changes to demonstrate dynamic adjustment
+  // Automatically refresh AI Plan when weather location changes
   useEffect(() => {
-    // Only auto-generate if API key is present and we have a weather change
-    if ((process.env.NEXT_PUBLIC_GEMINI_API_KEY || customKey) && weather.location.includes("Simulated")) {
+    if (weather.location && weather.location !== "Awaiting location synchronization...") {
       handleGeneratePlan();
     }
-  }, [weather]);
+  }, [weather.location]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -378,36 +329,6 @@ export default function Home() {
           {/* Personal Readiness Score */}
           <ReadinessScore checkedIds={profile.readinessCheckedItems || []} onChange={handleReadinessChange} />
 
-          {/* Judges Demo Simulation Box */}
-          <div className="glass-card p-5 border border-blue-500/20 bg-blue-950/10">
-            <div className="flex items-center gap-2 mb-3">
-              <Sparkles className="w-4.5 h-4.5 text-blue-400 animate-pulse" />
-              <h3 className="font-bold text-white text-xs uppercase tracking-wider">Judges Weather Simulation Panel</h3>
-            </div>
-            <p className="text-[11px] text-slate-400 mb-3.5 leading-relaxed">
-              Manually trigger severe weather alerts to evaluate the risk rules and observe how GenAI adjusts its travel advice and safety actions.
-            </p>
-            <div className="grid grid-cols-3 gap-2">
-              <button
-                onClick={() => handleSimulateAlert("ORANGE_ALERT")}
-                className="bg-orange-500/20 hover:bg-orange-500/35 border border-orange-500/30 text-orange-300 font-bold py-2 rounded-lg text-[10px] transition cursor-pointer"
-              >
-                Simulate Orange Rain
-              </button>
-              <button
-                onClick={() => handleSimulateAlert("RED_ALERT")}
-                className="bg-red-500/20 hover:bg-red-500/35 border border-red-500/30 text-red-300 font-bold py-2 rounded-lg text-[10px] transition cursor-pointer animate-pulse"
-              >
-                Simulate Red Storm
-              </button>
-              <button
-                onClick={() => handleSimulateAlert("CLEAR_ALERT")}
-                className="bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 font-semibold py-2 rounded-lg text-[10px] transition cursor-pointer"
-              >
-                Reset Live Weather
-              </button>
-            </div>
-          </div>
         </section>
 
         {/* Right Side: Navigation Tabs and Actions (7 columns on desktop) */}
